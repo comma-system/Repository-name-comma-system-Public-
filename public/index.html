@@ -194,16 +194,17 @@
     text-align: left;
   }
   .reco .tag {
-    display: inline-flex; align-items: center; gap: 4px;
+    display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;
     font-size: 12px; font-weight: 700; border-radius: 999px; padding: 4px 9px; margin-bottom: 10px;
   }
+  .tag.comma  { background: #e8f0fe; color: #3182f6; }
   .tag.safe   { background: #e8f7ef; color: #0e9f56; }
   .tag.aggro  { background: #fef0e6; color: #f7710d; }
   .tag.inst   { background: #f1ecfe; color: #8b5cf6; }
   .tag.burst  { background: #feecec; color: #f04452; }
-  .reco .nm { font-size: 15px; font-weight: 800; margin-bottom: 3px; }
-  .reco .pr { font-size: 13px; color: var(--ink-2); margin-bottom: 6px; }
-  .reco .sc { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+  .reco .nm { font-size: 15px; font-weight: 800; margin-bottom: 3px; white-space: nowrap; }
+  .reco .pr { font-size: 13px; color: var(--ink-2); margin-bottom: 6px; white-space: nowrap; }
+  .reco .sc { font-size: 13px; font-weight: 700; margin-bottom: 8px; white-space: nowrap; color: var(--ink); }
   .reco svg { width: 100%; height: 34px; display: block; }
 
   /* ── 검색 ── */
@@ -386,6 +387,13 @@
     <h2>오늘의 추천</h2><span class="sub">(투자 목적별)</span><span class="more">전체보기 ›</span>
   </div>
   <div class="reco-scroll" id="recoRow">
+    <button class="reco" data-code="005930">
+      <span class="tag comma">💠 콤마형</span>
+      <div class="nm">삼성전자</div>
+      <div class="pr num">191,000원</div>
+      <div class="sc num">콤마 92점</div>
+      <svg viewBox="0 0 100 34" preserveAspectRatio="none" data-color="#3182f6"></svg>
+    </button>
     <button class="reco" data-code="000660">
       <span class="tag safe">🛡 안전형</span>
       <div class="nm">SK하이닉스</div>
@@ -400,19 +408,19 @@
       <div class="sc num">콤마 91점</div>
       <svg viewBox="0 0 100 34" preserveAspectRatio="none" data-color="#f7710d"></svg>
     </button>
-    <button class="reco" data-code="005380">
-      <span class="tag inst">🏛 기관매집</span>
-      <div class="nm">현대차</div>
-      <div class="pr num">203,000원</div>
-      <div class="sc num">콤마 84점</div>
-      <svg viewBox="0 0 100 34" preserveAspectRatio="none" data-color="#8b5cf6"></svg>
-    </button>
     <button class="reco" data-code="086520">
-      <span class="tag burst">⚡ 3일폭발</span>
+      <span class="tag burst">⚡ 3일폭발형</span>
       <div class="nm">에코프로</div>
       <div class="pr num">78,300원</div>
       <div class="sc num">콤마 89점</div>
       <svg viewBox="0 0 100 34" preserveAspectRatio="none" data-color="#f04452"></svg>
+    </button>
+    <button class="reco" data-code="005380">
+      <span class="tag inst">🏛 기관형</span>
+      <div class="nm">현대차</div>
+      <div class="pr num">203,000원</div>
+      <div class="sc num">콤마 84점</div>
+      <svg viewBox="0 0 100 34" preserveAspectRatio="none" data-color="#8b5cf6"></svg>
     </button>
   </div>
 
