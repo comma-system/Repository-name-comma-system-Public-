@@ -1,0 +1,14 @@
+{
+  "name": "comma-system",
+  "version": "1.0.0",
+  "description": "1분봉 기반 단타 진입 판단 봇 + 웹 GUI (콤마 시스템)",
+  "main": "comma_bot.js",
+  "scripts": {
+    "start": "node server.js",
+    "bot": "node comma_bot.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}

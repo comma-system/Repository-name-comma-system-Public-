@@ -1,20 +1,49 @@
-const axios = require("axios");
-
 // =======================
 // 1분봉 데이터
 // =======================
-async function fetch1m(code) {
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${code}.KS?range=1d&interval=1m`;
-  const res = await axios.get(url);
+async function fetch1m(code, market = "KS") {
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${code}.${market}?range=1d&interval=1m`;
+  const res = await fetch(url, {
+    headers: { "User-Agent": "Mozilla/5.0" },
+  });
 
-  const r = res.data.chart.result[0];
-  const closes = r.indicators.quote[0].close;
-  const volumes = r.indicators.quote[0].volume;
+  if (!res.ok) {
+    throw new Error(`시세 조회 실패 (${code}.${market}): HTTP ${res.status}`);
+  }
 
-  return closes.map((c, i) => ({
-    close: c,
-    volume: volumes[i],
-  })).filter(x => x.close);
+  const body = await res.json();
+  const r = body.chart && body.chart.result && body.chart.result[0];
+
+  if (!r || !r.indicators || !r.indicators.quote || !r.indicators.quote[0]) {
+    throw new Error(`시세 데이터 없음 (${code}.${market})`);
+  }
+
+  const timestamps = r.timestamp || [];
+  const closes = r.indicators.quote[0].close || [];
+  const volumes = r.indicators.quote[0].volume || [];
+  const meta = r.meta || {};
+
+  const data = closes
+    .map((c, i) => ({
+      time: timestamps[i],
+      close: c,
+      volume: volumes[i] || 0,
+    }))
+    .filter(x => x.close);
+
+  return { data, meta };
+}
+
+// KOSPI(.KS) 먼저 조회하고 없으면 KOSDAQ(.KQ)으로 재시도
+async function fetch1mAuto(code) {
+  try {
+    const r = await fetch1m(code, "KS");
+    if (r.data.length > 0) return { ...r, market: "KS" };
+  } catch (e) {
+    // KOSDAQ으로 재시도
+  }
+  const r = await fetch1m(code, "KQ");
+  return { ...r, market: "KQ" };
 }
 
 // =======================
@@ -36,6 +65,8 @@ function noiseFilter(data) {
 // 돌파 감지
 // =======================
 function detectBreakout(data) {
+  if (data.length < 15) return false;
+
   const recent = data.slice(-15);
 
   const prevHigh = Math.max(...recent.slice(0, 14).map(x => x.close));
@@ -112,17 +143,53 @@ function decision(data) {
 }
 
 // =======================
-// 실행
+// 종목 분석 (GUI/CLI 공용)
 // =======================
-async function run() {
-  const code = "005930"; // 테스트용 종목
+async function analyze(code) {
+  const { data, meta, market } = await fetch1mAuto(code);
 
-  const data = await fetch1m(code);
-  const res = decision(data);
+  if (data.length === 0) {
+    throw new Error(`분석할 데이터가 없습니다 (${code})`);
+  }
 
-  console.log("📊 결과\n");
-  console.log(res);
+  return {
+    code,
+    market,
+    name: meta.shortName || meta.longName || code,
+    currency: meta.currency || "KRW",
+    prevClose: meta.chartPreviousClose || null,
+    ...decision(data),
+    candles: data,
+  };
 }
 
-run();
+// =======================
+// 실행 (CLI)
+// =======================
+async function run() {
+  const code = process.argv[2] || "005930"; // 기본: 삼성전자
 
+  const res = await analyze(code);
+  const { candles, ...summary } = res;
+
+  console.log("📊 결과\n");
+  console.log(summary);
+}
+
+module.exports = {
+  fetch1m,
+  fetch1mAuto,
+  noiseFilter,
+  detectBreakout,
+  calcStrength,
+  orderFlow,
+  decision,
+  analyze,
+};
+
+if (require.main === module) {
+  run().catch(err => {
+    console.error("❌ 오류:", err.message);
+    process.exit(1);
+  });
+}
