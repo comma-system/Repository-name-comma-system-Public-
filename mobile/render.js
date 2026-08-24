@@ -118,8 +118,8 @@
             <stop offset="0" stop-color="#22c55e"/><stop offset="1" stop-color="#86efac"/>
           </linearGradient>
         </defs>
-        <circle cx="42" cy="42" r="${R}" fill="none" stroke="#1d3450" stroke-width="7"/>
-        <circle cx="42" cy="42" r="${R}" fill="none" stroke="url(#gaugeGrad)" stroke-width="7"
+        <circle cx="42" cy="42" r="${R}" fill="none" stroke="#1d3450" stroke-width="8.5"/>
+        <circle cx="42" cy="42" r="${R}" fill="none" stroke="url(#gaugeGrad)" stroke-width="8.5"
           stroke-linecap="round" stroke-dasharray="${((P.score.percent / 100) * CIRC).toFixed(1)} ${CIRC.toFixed(1)}"/>
       </svg>
       <div class="gauge-center">
@@ -164,7 +164,7 @@
       <span class="section-sub">${D.recommend.subtitle}</span>
       <span class="section-more">${D.recommend.moreLabel} ›</span>
     </div>
-    <div class="rec-scroll">
+    <div class="rec-row">
       ${D.recommend.cards
         .map(
           (c, i) => `
