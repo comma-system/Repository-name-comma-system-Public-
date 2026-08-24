@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>COMMA ONE</title>
+<style>
+  /* ==================================================================
+     COMMA ONE 모바일 메인 화면 — 기준 이미지 측정값 기반 (설계 폭 390px)
+     기준 이미지(855px 폭) 측정값 × 0.456 으로 환산한 고정 기준값 사용
+     ================================================================== */
+  :root {
+    --page-bg: #f2f4f7;
+    --card-bg: #ffffff;
+    --dark-card-bg: #0c1a2c;
+    --text-strong: #111827;
+    --text-gray: #6b7280;
+    --text-light-gray: #9ca3af;
+    --green: #16a34a;
+    --red: #ef4444;
+    --blue: #2563eb;
+    --border: #e5e7eb;
+    --radius-card: 14px;
+    --side-margin: 16px;
+    --card-gap: 14px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: var(--page-bg); }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    color: var(--text-strong);
+    -webkit-font-smoothing: antialiased;
+  }
+  #app {
+    max-width: 390px;
+    margin: 0 auto;
+    min-height: 100vh;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: 78px; /* 하단 네비게이션 높이만큼 확보 */
+  }
+
+  /* ---------- 상단 헤더 ---------- */
+  .header {
+    display: flex; align-items: center;
+    padding: 12px var(--side-margin) 10px;
+  }
+  .logo {
+    font-size: 21px; font-weight: 800; letter-spacing: 0.5px;
+    background: linear-gradient(90deg, #0a2540 55%, #2563eb 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .tagline { font-size: 12px; color: var(--text-gray); margin-left: 10px; flex: 1; }
+  .header-icons { display: flex; align-items: center; gap: 16px; }
+  .icon-btn { position: relative; width: 22px; height: 22px; }
+  .icon-btn svg { width: 22px; height: 22px; display: block; }
+  .badge {
+    position: absolute; top: -5px; right: -7px;
+    min-width: 15px; height: 15px; border-radius: 8px;
+    background: var(--red); color: #fff; font-size: 9px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; padding: 0 3px;
+  }
+
+  /* ---------- 공통 카드 ---------- */
+  .card {
+    background: var(--card-bg);
+    border-radius: var(--radius-card);
+    margin: 0 var(--side-margin) var(--card-gap);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  }
+
+  /* ---------- 1. 오늘의 시장 ---------- */
+  .market-card { display: flex; gap: 12px; padding: 14px; }
+  .market-left { flex: 1.15; min-width: 0; }
+  .market-title-row { display: flex; align-items: center; gap: 7px; }
+  .market-title { font-size: 15px; font-weight: 700; }
+  .live-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: #f3f4f6; border-radius: 999px;
+    font-size: 9px; color: var(--text-gray); padding: 3px 8px;
+  }
+  .live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+  .market-status { display: flex; align-items: center; gap: 6px; margin-top: 10px; }
+  .status-dot {
+    width: 16px; height: 16px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #4ade80, #16a34a);
+  }
+  .market-status b { font-size: 15.5px; font-weight: 800; }
+  .market-status .hl { color: var(--green); }
+  .market-stats { display: flex; gap: 6px; margin-top: 12px; }
+  .stat-box {
+    flex: 1; border: 1px solid var(--border); border-radius: 10px;
+    padding: 8px 4px; text-align: center; background: #fff;
+  }
+  .stat-label { font-size: 10px; color: var(--text-gray); }
+  .stat-value { font-size: 16px; font-weight: 800; margin-top: 3px; }
+  .stat-sub { font-size: 8.5px; color: var(--text-light-gray); margin-top: 2px; }
+  .stat-dir { font-size: 10.5px; font-weight: 700; margin-top: 4px; color: var(--text-strong); }
+  .stat-dir .tri { color: var(--green); font-size: 9px; }
+  .stat-amount { font-size: 13px; font-weight: 800; color: var(--red); margin-top: 3px; }
+  .market-right { flex: 1; min-width: 0; padding-top: 2px; }
+  .sector-head { display: flex; align-items: center; justify-content: space-between; }
+  .sector-title { font-size: 11.5px; font-weight: 700; }
+  .sector-chevron { color: #c4c9d1; font-size: 12px; }
+  .sector-list { margin-top: 5px; margin-bottom: 9px; }
+  .sector-row { display: flex; align-items: center; font-size: 11px; padding: 2.5px 0; }
+  .sector-rank { width: 14px; color: var(--text-light-gray); }
+  .sector-name { flex: 1; color: #374151; }
+  .sector-change { font-weight: 700; }
+  .sector-change.up { color: var(--green); }
+  .sector-change.down { color: var(--blue); }
+
+  /* ---------- 2. 오늘의 포착 종목 ---------- */
+  .pick-card {
+    background: var(--dark-card-bg); color: #fff;
+    border-radius: 16px; padding: 14px; position: relative; overflow: hidden;
+  }
+  .pick-head { display: flex; align-items: center; }
+  .pick-star {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(250, 204, 21, 0.15);
+    display: flex; align-items: center; justify-content: center; margin-right: 7px;
+  }
+  .pick-title { font-size: 13.5px; font-weight: 700; flex: 1; }
+  .pick-more {
+    font-size: 10px; color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.35);
+    border-radius: 999px; padding: 4px 10px;
+  }
+  .pick-name-row { margin-top: 10px; display: flex; align-items: baseline; gap: 6px; }
+  .pick-name { font-size: 20px; font-weight: 800; }
+  .pick-code { font-size: 13px; color: #8ea0b5; }
+  .pick-price-row { display: flex; align-items: baseline; gap: 8px; margin-top: 4px; }
+  .pick-price { font-size: 24px; font-weight: 800; }
+  .pick-change { font-size: 14px; font-weight: 800; color: #ff5252; }
+  .pick-chart { position: absolute; right: 14px; top: 52px; width: 108px; height: 50px; }
+  .pick-chips { display: flex; gap: 6px; margin-top: 10px; }
+  .pick-chip {
+    background: #16283f; border-radius: 7px; padding: 5px 8px;
+    font-size: 9.5px; color: #93a5bb; white-space: nowrap;
+  }
+  .pick-chip b { color: #e6edf5; font-weight: 700; margin-left: 3px; }
+  .pick-body { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+  .gauge { width: 84px; height: 84px; position: relative; flex-shrink: 0; }
+  .gauge svg { width: 84px; height: 84px; transform: rotate(-90deg); }
+  .gauge-center {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .gauge-label { font-size: 8.5px; color: #8ea0b5; }
+  .gauge-value { font-size: 19px; font-weight: 800; margin-top: 1px; }
+  .gauge-max { font-size: 8.5px; color: #8ea0b5; margin-top: 1px; }
+  .pick-right { flex: 1; min-width: 0; }
+  .signal-box {
+    display: inline-block; background: #0f3b2a; border: 1px solid rgba(34,197,94,0.35);
+    color: #4ade80; font-size: 12px; font-weight: 700;
+    border-radius: 8px; padding: 6px 12px;
+  }
+  .pick-desc { margin-top: 7px; font-size: 10.5px; line-height: 1.55; color: #b7c3d2; }
+  .zone-bar {
+    display: flex; align-items: center; margin-top: 12px;
+    background: #16283f; border-radius: 8px; padding: 8px 10px;
+    font-size: 10px; white-space: nowrap;
+  }
+  .zone-label-buy { color: #ff6b6b; font-weight: 700; margin-right: 5px; }
+  .zone-label-target { color: #60a5fa; font-weight: 700; margin-right: 5px; }
+  .zone-value { color: #e6edf5; font-weight: 600; }
+  .zone-sep { color: #35507a; margin: 0 8px; }
+
+  /* ---------- 3. 오늘의 추천 ---------- */
+  .section-head {
+    display: flex; align-items: baseline;
+    margin: 2px var(--side-margin) 9px;
+  }
+  .section-title { font-size: 15px; font-weight: 700; }
+  .section-sub { font-size: 10.5px; color: var(--text-gray); margin-left: 5px; flex: 1; }
+  .section-more { font-size: 10.5px; color: var(--text-gray); }
+  .rec-scroll {
+    display: flex; gap: 8px; overflow-x: auto;
+    padding: 0 var(--side-margin); margin-bottom: var(--card-gap);
+    scrollbar-width: none;
+  }
+  .rec-scroll::-webkit-scrollbar { display: none; }
+  .rec-card {
+    flex: 0 0 86px; background: #fff; border-radius: 12px;
+    padding: 9px 9px 7px; box-shadow: 0 1px 3px rgba(15,23,42,0.04);
+  }
+  .rec-badge {
+    display: inline-flex; align-items: center; gap: 3px;
+    font-size: 9px; font-weight: 700; border-radius: 999px; padding: 3px 7px;
+  }
+  .rec-badge.safe { background: #dcfce7; color: #16a34a; }
+  .rec-badge.aggressive { background: #ffedd5; color: #ea580c; }
+  .rec-badge.inst { background: #ede9fe; color: #7c3aed; }
+  .rec-badge.burst { background: #fee2e2; color: #dc2626; }
+  .rec-name { font-size: 12px; font-weight: 800; margin-top: 7px; }
+  .rec-price { font-size: 10.5px; color: #374151; margin-top: 3px; }
+  .rec-score { font-size: 10.5px; font-weight: 700; margin-top: 3px; }
+  .rec-chart { width: 100%; height: 22px; margin-top: 5px; display: block; }
+
+  /* ---------- 4. 검색 ---------- */
+  .search-card { padding: 13px 14px 12px; }
+  .search-title { font-size: 14px; font-weight: 700; }
+  .search-input {
+    display: flex; align-items: center; gap: 7px;
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 9px 12px; margin-top: 9px; background: #fff;
+  }
+  .search-input span { font-size: 11px; color: var(--text-light-gray); }
+  .search-chips {
+    display: flex; gap: 6px; margin-top: 9px;
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .search-chips::-webkit-scrollbar { display: none; }
+  .s-chip {
+    flex: 0 0 auto; font-size: 10px; color: #374151;
+    border: 1px solid var(--border); border-radius: 999px; padding: 5px 9px;
+    background: #fff; white-space: nowrap;
+  }
+  .s-chip.ai {
+    background: #dbeafe; border-color: #dbeafe; color: var(--blue); font-weight: 700;
+    display: inline-flex; align-items: center; gap: 3px;
+  }
+
+  /* ---------- 5. 오늘의 발굴 현황 ---------- */
+  .discovery-card { padding: 13px 12px 13px; }
+  .discovery-head { display: flex; align-items: center; }
+  .discovery-title { font-size: 14px; font-weight: 700; }
+  .info-icon {
+    width: 13px; height: 13px; border-radius: 50%; border: 1px solid #c4c9d1;
+    color: #c4c9d1; font-size: 9px; display: inline-flex; align-items: center;
+    justify-content: center; margin-left: 5px; flex: none;
+  }
+  .discovery-head .spacer { flex: 1; }
+  .discovery-steps { display: flex; align-items: flex-start; margin-top: 13px; }
+  .step { flex: 1; text-align: center; min-width: 0; }
+  .step-icon {
+    width: 34px; height: 34px; border-radius: 50%; background: #eff6ff;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto;
+  }
+  .step.final .step-icon { background: #fee2e2; }
+  .step-label { font-size: 8.5px; color: var(--text-gray); margin-top: 6px; white-space: nowrap; }
+  .step-count { font-size: 10px; font-weight: 800; margin-top: 2px; white-space: nowrap; }
+  .step.final .step-count { color: var(--green); }
+  .step-arrow { color: #c4c9d1; font-size: 11px; padding-top: 12px; flex: none; }
+
+  /* ---------- 6. 오늘의 시장 브리핑 ---------- */
+  .briefing-card {
+    background: #e4f5e9; border-radius: var(--radius-card);
+    margin: 0 var(--side-margin) var(--card-gap);
+    padding: 12px 12px; display: flex; align-items: center; gap: 8px;
+  }
+  .briefing-left { flex: 1; min-width: 0; }
+  .briefing-title { font-size: 12.5px; font-weight: 800; display: flex; align-items: center; gap: 5px; }
+  .briefing-msg { font-size: 10px; color: #4b5563; margin-top: 5px; }
+  .briefing-illust { width: 44px; height: 38px; flex: none; }
+  .briefing-btn {
+    flex: none; background: var(--green); color: #fff; font-size: 11px; font-weight: 700;
+    border-radius: 999px; padding: 8px 13px; display: inline-flex; align-items: center; gap: 3px;
+  }
+
+  /* ---------- 하단 네비게이션 ---------- */
+  .bottom-nav {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    background: #fff; border-top: 1px solid #eceff3;
+    padding: 7px 0 calc(6px + env(safe-area-inset-bottom, 8px));
+    z-index: 10;
+  }
+  .bottom-nav-inner {
+    max-width: 390px; margin: 0 auto;
+    display: flex;
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    color: #8a94a3;
+  }
+  .nav-item.active { color: var(--blue); }
+  .nav-item svg { width: 22px; height: 22px; }
+  .nav-label { font-size: 9px; }
+  .home-indicator {
+    width: 128px; height: 5px; border-radius: 3px; background: #0f172a;
+    margin: 8px auto 0;
+  }
+</style>
+</head>
+<body>
+  <div id="app"></div>
+  <script src="data.js"></script>
+  <script src="render.js"></script>
+</body>
+</html>
