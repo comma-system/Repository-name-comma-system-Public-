@@ -5,6 +5,7 @@ const { analyze } = require("./comma_bot");
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, "public");
+const MOBILE_DIR = path.join(__dirname, "mobile");
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -22,11 +23,24 @@ function sendJson(res, status, obj) {
 }
 
 function serveStatic(res, urlPath) {
-  const rel = urlPath === "/" ? "index.html" : urlPath.replace(/^\/+/, "");
-  const filePath = path.join(PUBLIC_DIR, rel);
+  // /mobile 경로는 모바일 메인 화면(mobile/) 서빙
+  // 상대경로(data.js 등)가 올바르게 해석되도록 /mobile은 /mobile/로 정규화
+  if (urlPath === "/mobile") {
+    res.writeHead(301, { Location: "/mobile/" });
+    return res.end();
+  }
+  let baseDir = PUBLIC_DIR;
+  let rel;
+  if (urlPath.startsWith("/mobile/")) {
+    baseDir = MOBILE_DIR;
+    rel = urlPath.replace(/^\/mobile\/+/, "") || "index.html";
+  } else {
+    rel = urlPath === "/" ? "index.html" : urlPath.replace(/^\/+/, "");
+  }
+  const filePath = path.join(baseDir, rel);
 
-  // public 디렉터리 밖 접근 차단
-  if (!filePath.startsWith(PUBLIC_DIR)) {
+  // 서빙 디렉터리 밖 접근 차단
+  if (!filePath.startsWith(baseDir)) {
     res.writeHead(403);
     return res.end("Forbidden");
   }

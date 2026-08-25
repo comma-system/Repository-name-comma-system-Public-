@@ -2,9 +2,10 @@
 // COMMA ONE 모바일 메인 화면 렌더러 (표시 전용)
 // 데이터 계층(data.js)이 준비한 값을 기준 이미지와 동일하게 표시만 한다.
 // 어떤 점수/등락률/순위 계산도 여기서 하지 않는다.
+// 실데이터: /api/analyze(기존 백엔드 API)를 호출해 data.js의 매핑 계층
+// (COMMA_MAP_PICK / COMMA_MAP_RECO)이 변환한 결과를 다시 표시한다.
 // =====================================================================
 (function () {
-  const D = window.COMMA_DATA;
   const app = document.getElementById("app");
 
   // 정규화(0~100)된 좌표를 SVG polyline 점 문자열로 변환 (표시용 좌표 변환)
@@ -58,199 +59,262 @@
     chart: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V10M9 20V4M14 20v-9M19 20V7"/></svg>`,
   };
 
-  // ---------- 상단 헤더 ----------
-  const header = `
-    <div class="header">
-      <span class="logo">${D.header.logo}</span>
-      <span class="tagline">${D.header.tagline}</span>
-      <div class="header-icons">
-        <div class="icon-btn">${ICONS.bell}<span class="badge">${D.header.notificationCount}</span></div>
-        <div class="icon-btn">${ICONS.gear}</div>
-      </div>
-    </div>`;
+  function renderApp() {
+    const D = window.COMMA_DATA;
 
-  // ---------- 1. 오늘의 시장 ----------
-  const M = D.market;
-  const statBoxes = M.stats
-    .map((s) =>
-      s.sub
-        ? `<div class="stat-box"><div class="stat-label">${s.label}</div><div class="stat-value">${s.value}</div><div class="stat-sub">${s.sub}</div></div>`
-        : `<div class="stat-box"><div class="stat-label">${s.label}</div><div class="stat-dir"><span class="tri">▲</span> 순매수</div><div class="stat-amount">${s.value}</div></div>`
-    )
-    .join("");
-  const sectorList = (sec, dir) => `
-    <div class="sector-list">
-      ${sec.items
-        .map(
-          (it) => `<div class="sector-row"><span class="sector-rank">${it.rank}</span><span class="sector-name">${it.name}</span><span class="sector-change ${dir}">${it.change}</span></div>`
-        )
-        .join("")}
-    </div>`;
-  const marketCard = `
-    <div class="card market-card">
-      <div class="market-left">
-        <div class="market-title-row">
-          <span class="market-title">${M.title}</span>
-          <span class="live-pill">${M.liveLabel} <span class="live-dot"></span></span>
+    // ---------- 상단 헤더 ----------
+    const header = `
+      <div class="header">
+        <span class="logo">${D.header.logo}</span>
+        <span class="tagline">${D.header.tagline}</span>
+        <div class="header-icons">
+          <div class="icon-btn">${ICONS.bell}<span class="badge">${D.header.notificationCount}</span></div>
+          <div class="icon-btn">${ICONS.gear}</div>
         </div>
-        <div class="market-status">
-          <span class="status-dot"></span>
-          <b><span class="hl">${M.statusHighlight}</span>${M.statusRest}</b>
-        </div>
-        <div class="market-stats">${statBoxes}</div>
-      </div>
-      <div class="market-right">
-        <div class="sector-head"><span class="sector-title">${M.strongSectors.title}</span><span class="sector-chevron">›</span></div>
-        ${sectorList(M.strongSectors, "up")}
-        <div class="sector-head"><span class="sector-title">${M.weakSectors.title}</span></div>
-        ${sectorList(M.weakSectors, "down")}
-      </div>
-    </div>`;
+      </div>`;
 
-  // ---------- 2. 오늘의 포착 종목 ----------
-  const P = D.pick;
-  const R = 36; // 게이지 반지름
-  const CIRC = 2 * Math.PI * R;
-  const gauge = `
-    <div class="gauge">
-      <svg viewBox="0 0 84 84">
-        <defs>
-          <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#22c55e"/><stop offset="1" stop-color="#86efac"/>
-          </linearGradient>
-        </defs>
-        <circle cx="42" cy="42" r="${R}" fill="none" stroke="#1d3450" stroke-width="8.5"/>
-        <circle cx="42" cy="42" r="${R}" fill="none" stroke="url(#gaugeGrad)" stroke-width="8.5"
-          stroke-linecap="round" stroke-dasharray="${((P.score.percent / 100) * CIRC).toFixed(1)} ${CIRC.toFixed(1)}"/>
-      </svg>
-      <div class="gauge-center">
-        <span class="gauge-label">${P.score.label}</span>
-        <span class="gauge-value">${P.score.value}</span>
-        <span class="gauge-max">${P.score.max}</span>
-      </div>
-    </div>`;
-  const pickCard = `
-    <div class="card pick-card">
-      <div class="pick-head">
-        <span class="pick-star">${ICONS.star}</span>
-        <span class="pick-title">${P.title}</span>
-        <span class="pick-more">${P.moreLabel} ›</span>
-      </div>
-      <div class="pick-name-row"><span class="pick-name">${P.name}</span><span class="pick-code">(${P.code})</span></div>
-      <div class="pick-price-row"><span class="pick-price">${P.price}</span><span class="pick-change">${P.change}</span></div>
-      <div class="pick-chart">${lineChartSVG(P.chart, 108, 50, "#22c55e", "pick")}</div>
-      <div class="pick-chips">
-        ${P.chips.map((c) => `<span class="pick-chip">${c.label}<b>${c.value}</b></span>`).join("")}
-      </div>
-      <div class="pick-body">
-        ${gauge}
-        <div class="pick-right">
-          <span class="signal-box">${P.signal}</span>
-          <div class="pick-desc">${P.description.join("<br>")}</div>
-        </div>
-      </div>
-      <div class="zone-bar">
-        <span class="zone-pair"><span class="zone-label-buy">${P.buyZone.label}</span><span class="zone-value">${P.buyZone.value}</span></span>
-        <span class="zone-sep">|</span>
-        <span class="zone-pair"><span class="zone-label-target">${P.targetZone.label}</span><span class="zone-value">${P.targetZone.value}</span></span>
-      </div>
-    </div>`;
-
-  // ---------- 3. 오늘의 추천 ----------
-  const REC_COLORS = { comma: "#3182f6", safe: "#22c55e", aggressive: "#f97316", inst: "#a78bfa", burst: "#ef4444" };
-  const REC_ICONS = { comma: ICONS.diamond, safe: ICONS.shield, aggressive: ICONS.fire, inst: ICONS.bank, burst: ICONS.bolt };
-  const recSection = `
-    <div class="section-head">
-      <span class="section-title">${D.recommend.title}</span>
-      <span class="section-sub">${D.recommend.subtitle}</span>
-      <span class="section-more">${D.recommend.moreLabel} ›</span>
-    </div>
-    <div class="rec-row">
-      ${D.recommend.cards
-        .map(
-          (c, i) => `
-        <div class="rec-card">
-          <span class="rec-badge ${c.theme}">${REC_ICONS[c.theme]} ${c.type}</span>
-          <div class="rec-name">${c.name}</div>
-          <div class="rec-price">${c.price}</div>
-          <div class="rec-score">${c.score}</div>
-          <div class="rec-chart">${lineChartSVG(c.chart, 70, 22, REC_COLORS[c.theme], "rec" + i)}</div>
-        </div>`
-        )
-        .join("")}
-    </div>`;
-
-  // ---------- 4. 검색 ----------
-  const S = D.search;
-  const searchCard = `
-    <div class="card search-card">
-      <div class="search-title">${S.title}</div>
-      <div class="search-input">${ICONS.magnifySmall}<span>${S.placeholder}</span></div>
-      <div class="search-chips">
-        ${S.chips.map((c) => `<span class="s-chip">${c}</span>`).join("")}
-        <span class="s-chip ai">${ICONS.sparkle} ${S.aiChip}</span>
-      </div>
-    </div>`;
-
-  // ---------- 5. 오늘의 발굴 현황 ----------
-  const steps = D.discovery.steps
-    .map(
-      (s, i) => `
-      ${i > 0 ? `<span class="step-arrow">→</span>` : ""}
-      <div class="step${s.final ? " final" : ""}">
-        <div class="step-icon">${ICONS[s.icon]}</div>
-        <div class="step-label">${s.label}</div>
-        <div class="step-count">${s.count}</div>
-      </div>`
-    )
-    .join("");
-  const discoveryCard = `
-    <div class="card discovery-card">
-      <div class="discovery-head">
-        <span class="discovery-title">${D.discovery.title}</span>
-        <span class="info-icon">i</span>
-        <span class="spacer"></span>
-        <span class="section-more">${D.discovery.moreLabel} ›</span>
-      </div>
-      <div class="discovery-steps">${steps}</div>
-    </div>`;
-
-  // ---------- 6. 오늘의 시장 브리핑 ----------
-  const B = D.briefing;
-  const briefingCard = `
-    <div class="briefing-card">
-      <div class="briefing-left">
-        <div class="briefing-title">${ICONS.chartMini} ${B.title}</div>
-        <div class="briefing-msg">${B.message}</div>
-      </div>
-      <svg class="briefing-illust" viewBox="0 0 44 38">
-        <rect x="14" y="2" width="22" height="30" rx="3" fill="#fff" stroke="#bfe8cc"/>
-        <rect x="18" y="8" width="14" height="2.5" rx="1" fill="#cfe3d7"/>
-        <rect x="18" y="13" width="10" height="2.5" rx="1" fill="#cfe3d7"/>
-        <rect x="18" y="18" width="12" height="2.5" rx="1" fill="#cfe3d7"/>
-        <rect x="4" y="22" width="4" height="12" rx="1" fill="#22c55e"/>
-        <rect x="10" y="18" width="4" height="16" rx="1" fill="#4ade80"/>
-        <rect x="16" y="26" width="4" height="8" rx="1" fill="#86efac"/>
-      </svg>
-      <span class="briefing-btn">${B.buttonLabel} ›</span>
-    </div>`;
-
-  // ---------- 하단 네비게이션 ----------
-  const nav = `
-    <div class="bottom-nav">
-      <div class="bottom-nav-inner">
-        ${D.nav
+    // ---------- 1. 오늘의 시장 ----------
+    const M = D.market;
+    const statBoxes = M.stats
+      .map((s) =>
+        s.sub
+          ? `<div class="stat-box"><div class="stat-label">${s.label}</div><div class="stat-value">${s.value}</div><div class="stat-sub">${s.sub}</div></div>`
+          : `<div class="stat-box"><div class="stat-label">${s.label}</div><div class="stat-dir"><span class="tri">▲</span> 순매수</div><div class="stat-amount">${s.value}</div></div>`
+      )
+      .join("");
+    const sectorList = (sec, dir) => `
+      <div class="sector-list">
+        ${sec.items
           .map(
-            (n) => `
-          <div class="nav-item${n.active ? " active" : ""}">
-            ${ICONS[n.icon]}
-            <span class="nav-label">${n.label}</span>
+            (it) => `<div class="sector-row"><span class="sector-rank">${it.rank}</span><span class="sector-name">${it.name}</span><span class="sector-change ${dir}">${it.change}</span></div>`
+          )
+          .join("")}
+      </div>`;
+    const marketCard = `
+      <div class="card market-card">
+        <div class="market-left">
+          <div class="market-title-row">
+            <span class="market-title">${M.title}</span>
+            <span class="live-pill">${M.liveLabel} <span class="live-dot"></span></span>
+          </div>
+          <div class="market-status">
+            <span class="status-dot"></span>
+            <b><span class="hl">${M.statusHighlight}</span>${M.statusRest}</b>
+          </div>
+          <div class="market-stats">${statBoxes}</div>
+        </div>
+        <div class="market-right">
+          <div class="sector-head"><span class="sector-title">${M.strongSectors.title}</span><span class="sector-chevron">›</span></div>
+          ${sectorList(M.strongSectors, "up")}
+          <div class="sector-head"><span class="sector-title">${M.weakSectors.title}</span></div>
+          ${sectorList(M.weakSectors, "down")}
+        </div>
+      </div>`;
+
+    // ---------- 2. 오늘의 포착 종목 ----------
+    const P = D.pick;
+    const R = 36; // 게이지 반지름
+    const CIRC = 2 * Math.PI * R;
+    // 점수대별 게이지 색 — PC GUI와 동일 (70+ 초록 / 40+ 노랑 / 그 외 빨강)
+    const gaugeStroke =
+      P.score.percent >= 70 ? "url(#gaugeGrad)" : P.score.percent >= 40 ? "#facc15" : "#f04452";
+    const gauge = `
+      <div class="gauge">
+        <svg viewBox="0 0 84 84">
+          <defs>
+            <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#22c55e"/><stop offset="1" stop-color="#86efac"/>
+            </linearGradient>
+          </defs>
+          <circle cx="42" cy="42" r="${R}" fill="none" stroke="#1d3450" stroke-width="8.5"/>
+          <circle cx="42" cy="42" r="${R}" fill="none" stroke="${gaugeStroke}" stroke-width="8.5"
+            stroke-linecap="round" stroke-dasharray="${((P.score.percent / 100) * CIRC).toFixed(1)} ${CIRC.toFixed(1)}"/>
+        </svg>
+        <div class="gauge-center">
+          <span class="gauge-label">${P.score.label}</span>
+          <span class="gauge-value">${P.score.value}</span>
+          <span class="gauge-max">${P.score.max}</span>
+        </div>
+      </div>`;
+    const pickCard = `
+      <div class="card pick-card">
+        <div class="pick-head">
+          <span class="pick-star">${ICONS.star}</span>
+          <span class="pick-title">${P.title}</span>
+          <span class="pick-more">${P.moreLabel} ›</span>
+        </div>
+        <div class="pick-name-row"><span class="pick-name">${P.name}</span><span class="pick-code">(${P.code})</span></div>
+        <div class="pick-price-row"><span class="pick-price">${P.price}</span><span class="pick-change${P.changeDown ? " down" : ""}">${P.change}</span></div>
+        <div class="pick-chart">${lineChartSVG(P.chart, 108, 50, P.changeDown ? "#6ba3ff" : "#22c55e", "pick")}</div>
+        <div class="pick-chips">
+          ${P.chips.map((c) => `<span class="pick-chip">${c.label}<b>${c.value}</b></span>`).join("")}
+        </div>
+        <div class="pick-body">
+          ${gauge}
+          <div class="pick-right">
+            <span class="signal-box${P.signalWarn ? " warn" : ""}">${P.signal}</span>
+            <div class="pick-desc">${P.description.join("<br>")}</div>
+          </div>
+        </div>
+        <div class="zone-bar">
+          <span class="zone-pair"><span class="zone-label-buy">${P.buyZone.label}</span><span class="zone-value">${P.buyZone.value}</span></span>
+          <span class="zone-sep">|</span>
+          <span class="zone-pair"><span class="zone-label-target">${P.targetZone.label}</span><span class="zone-value">${P.targetZone.value}</span></span>
+        </div>
+      </div>`;
+
+    // ---------- 3. 오늘의 추천 ----------
+    const REC_COLORS = { comma: "#3182f6", safe: "#22c55e", aggressive: "#f97316", inst: "#a78bfa", burst: "#ef4444" };
+    const REC_ICONS = { comma: ICONS.diamond, safe: ICONS.shield, aggressive: ICONS.fire, inst: ICONS.bank, burst: ICONS.bolt };
+    const recSection = `
+      <div class="section-head">
+        <span class="section-title">${D.recommend.title}</span>
+        <span class="section-sub">${D.recommend.subtitle}</span>
+        <span class="section-more">${D.recommend.moreLabel} ›</span>
+      </div>
+      <div class="rec-row">
+        ${D.recommend.cards
+          .map(
+            (c, i) => `
+          <div class="rec-card" data-code="${c.code}">
+            <span class="rec-badge ${c.theme}">${REC_ICONS[c.theme]} ${c.type}</span>
+            <div class="rec-name">${c.name}</div>
+            <div class="rec-price">${c.price}</div>
+            <div class="rec-score">${c.score}</div>
+            <div class="rec-chart">${lineChartSVG(c.chart, 70, 22, REC_COLORS[c.theme], "rec" + i)}</div>
           </div>`
           )
           .join("")}
-      </div>
-      <div class="home-indicator"></div>
-    </div>`;
+      </div>`;
 
-  app.innerHTML = header + marketCard + pickCard + recSection + searchCard + discoveryCard + briefingCard + nav;
+    // ---------- 4. 검색 ----------
+    const S = D.search;
+    const searchCard = `
+      <div class="card search-card">
+        <div class="search-title">${S.title}</div>
+        <div class="search-input">${ICONS.magnifySmall}<input class="search-field" type="text" inputmode="search" placeholder="${S.placeholder}"></div>
+        <div class="search-chips">
+          ${S.chips.map((c) => `<span class="s-chip">${c}</span>`).join("")}
+          <span class="s-chip ai">${ICONS.sparkle} ${S.aiChip}</span>
+        </div>
+      </div>`;
+
+    // ---------- 5. 오늘의 발굴 현황 ----------
+    const steps = D.discovery.steps
+      .map(
+        (s, i) => `
+        ${i > 0 ? `<span class="step-arrow">→</span>` : ""}
+        <div class="step${s.final ? " final" : ""}">
+          <div class="step-icon">${ICONS[s.icon]}</div>
+          <div class="step-label">${s.label}</div>
+          <div class="step-count">${s.count}</div>
+        </div>`
+      )
+      .join("");
+    const discoveryCard = `
+      <div class="card discovery-card">
+        <div class="discovery-head">
+          <span class="discovery-title">${D.discovery.title}</span>
+          <span class="info-icon">i</span>
+          <span class="spacer"></span>
+          <span class="section-more">${D.discovery.moreLabel} ›</span>
+        </div>
+        <div class="discovery-steps">${steps}</div>
+      </div>`;
+
+    // ---------- 6. 오늘의 시장 브리핑 ----------
+    const B = D.briefing;
+    const briefingCard = `
+      <div class="briefing-card">
+        <div class="briefing-left">
+          <div class="briefing-title">${ICONS.chartMini} ${B.title}</div>
+          <div class="briefing-msg">${B.message}</div>
+        </div>
+        <svg class="briefing-illust" viewBox="0 0 44 38">
+          <rect x="14" y="2" width="22" height="30" rx="3" fill="#fff" stroke="#bfe8cc"/>
+          <rect x="18" y="8" width="14" height="2.5" rx="1" fill="#cfe3d7"/>
+          <rect x="18" y="13" width="10" height="2.5" rx="1" fill="#cfe3d7"/>
+          <rect x="18" y="18" width="12" height="2.5" rx="1" fill="#cfe3d7"/>
+          <rect x="4" y="22" width="4" height="12" rx="1" fill="#22c55e"/>
+          <rect x="10" y="18" width="4" height="16" rx="1" fill="#4ade80"/>
+          <rect x="16" y="26" width="4" height="8" rx="1" fill="#86efac"/>
+        </svg>
+        <span class="briefing-btn">${B.buttonLabel} ›</span>
+      </div>`;
+
+    // ---------- 하단 네비게이션 ----------
+    const nav = `
+      <div class="bottom-nav">
+        <div class="bottom-nav-inner">
+          ${D.nav
+            .map(
+              (n) => `
+            <div class="nav-item${n.active ? " active" : ""}">
+              ${ICONS[n.icon]}
+              <span class="nav-label">${n.label}</span>
+            </div>`
+            )
+            .join("")}
+        </div>
+        <div class="home-indicator"></div>
+      </div>`;
+
+    app.innerHTML = header + marketCard + pickCard + recSection + searchCard + discoveryCard + briefingCard + nav;
+
+    // ---------- 기능 연결 (기존 백엔드 /api/analyze — PC GUI와 동일 동작) ----------
+    // 추천 카드 탭 → 포착 종목 카드에서 해당 종목 분석
+    app.querySelectorAll(".rec-card").forEach((el) => {
+      el.addEventListener("click", () => loadPick(el.dataset.code));
+    });
+    // 검색: 6자리 종목 코드 입력 시 분석 (PC GUI와 동일)
+    const field = app.querySelector(".search-field");
+    field.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && /^\d{6}$/.test(field.value.trim())) {
+        loadPick(field.value.trim());
+        field.blur();
+      }
+    });
+  }
+
+  // ---------- 실데이터 로딩 (서버로 서빙될 때만 동작, 실패 시 기본값 유지) ----------
+  const isHttp = location.protocol === "http:" || location.protocol === "https:";
+
+  async function apiAnalyze(code) {
+    const res = await fetch("/api/analyze?code=" + encodeURIComponent(code));
+    const body = await res.json();
+    if (!res.ok) throw new Error(body.error || "분석 실패");
+    return body;
+  }
+
+  async function loadPick(code) {
+    if (!isHttp) return;
+    try {
+      window.COMMA_DATA.pick = window.COMMA_MAP_PICK(await apiAnalyze(code));
+      renderApp();
+    } catch (e) {
+      // 조회 실패 시 현재 표시(기본값) 유지 — PC GUI와 동일한 정책
+    }
+  }
+
+  async function loadRecoAll() {
+    const cards = window.COMMA_DATA.recommend.cards;
+    let changed = false;
+    await Promise.all(
+      cards.map(async (c, i) => {
+        try {
+          cards[i] = window.COMMA_MAP_RECO(c, await apiAnalyze(c.code));
+          changed = true;
+        } catch (e) {
+          // 실패한 카드는 기본값 유지
+        }
+      })
+    );
+    if (changed) renderApp();
+  }
+
+  renderApp();
+  if (isHttp) {
+    loadPick(window.COMMA_DATA.pick.code);
+    loadRecoAll();
+  }
 })();

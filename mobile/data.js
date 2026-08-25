@@ -67,11 +67,11 @@ window.COMMA_DATA = {
     // 기준 이미지에는 4개가 보이므로 앞 4개가 기준 화면 그대로 노출되고
     // 5번째(콤마형)는 가로 스크롤로 자연스럽게 이어진다.
     cards: [
-      { type: "안전형", theme: "safe", icon: "shield", name: "SK하이닉스", price: "248,500원", score: "콤마 86점", chart: [20, 35, 28, 45, 38, 30, 42, 55, 48, 62, 58, 72] },
-      { type: "공격형", theme: "aggressive", icon: "fire", name: "한미반도체", price: "135,800원", score: "콤마 91점", chart: [15, 28, 22, 40, 32, 50, 44, 38, 58, 52, 70, 80] },
-      { type: "기관매집", theme: "inst", icon: "bank", name: "현대차", price: "203,000원", score: "콤마 84점", chart: [25, 20, 35, 30, 45, 38, 52, 46, 60, 55, 68, 75] },
-      { type: "3일폭발", theme: "burst", icon: "bolt", name: "에코프로", price: "78,300원", score: "콤마 89점", chart: [18, 30, 25, 42, 36, 55, 48, 62, 56, 74, 68, 88] },
-      { type: "콤마형", theme: "comma", icon: "diamond", name: "삼성전자", price: "191,000원", score: "콤마 92점", chart: [14, 26, 22, 36, 30, 44, 40, 54, 50, 66, 62, 82] },
+      { type: "안전형", theme: "safe", icon: "shield", code: "000660", name: "SK하이닉스", price: "248,500원", score: "콤마 86점", chart: [20, 35, 28, 45, 38, 30, 42, 55, 48, 62, 58, 72] },
+      { type: "공격형", theme: "aggressive", icon: "fire", code: "042700", name: "한미반도체", price: "135,800원", score: "콤마 91점", chart: [15, 28, 22, 40, 32, 50, 44, 38, 58, 52, 70, 80] },
+      { type: "기관매집", theme: "inst", icon: "bank", code: "005380", name: "현대차", price: "203,000원", score: "콤마 84점", chart: [25, 20, 35, 30, 45, 38, 52, 46, 60, 55, 68, 75] },
+      { type: "3일폭발", theme: "burst", icon: "bolt", code: "086520", name: "에코프로", price: "78,300원", score: "콤마 89점", chart: [18, 30, 25, 42, 36, 55, 48, 62, 56, 74, 68, 88] },
+      { type: "콤마형", theme: "comma", icon: "diamond", code: "005930", name: "삼성전자", price: "191,000원", score: "콤마 92점", chart: [14, 26, 22, 36, 30, 44, 40, 54, 50, 66, 62, 82] },
     ],
   },
 
@@ -108,3 +108,88 @@ window.COMMA_DATA = {
     { icon: "chart", label: "차트", active: false },
   ],
 };
+
+// =====================================================================
+// 실데이터 매핑 계층 — /api/analyze 응답(백엔드 분석 결과)을 표시용 데이터로 변환.
+// 점수/구간/판단 규칙은 PC GUI(public/index.html)와 완전히 동일하다.
+// UI(render.js)는 이 결과를 그대로 표시만 한다.
+// =====================================================================
+(function () {
+  const fmt = new Intl.NumberFormat("ko-KR");
+  const roundPrice = (v) => Math.round(v / 100) * 100;
+
+  // 캔들 종가 → 0~100 정규화 좌표 (차트 표시용)
+  function normalize(closes) {
+    const min = Math.min(...closes), max = Math.max(...closes);
+    const span = max - min || 1;
+    return closes.map((c) => ((c - min) / span) * 100);
+  }
+
+  // 콤마 점수 — PC GUI의 commaScore와 동일
+  window.COMMA_SCORE = function (r) {
+    let s = 0;
+    s += Math.min(50, Number(r.strength) * 0.5);
+    if (r.clean) s += 15;
+    if (r.breakout) s += 20;
+    if (r.flow === "매수 우위") s += 15;
+    else if (r.flow === "중립") s += 7;
+    return Math.round(s);
+  };
+
+  // 포착 종목 카드 데이터 — PC GUI의 renderHero와 동일한 매핑
+  window.COMMA_MAP_PICK = function (r) {
+    const prev = window.COMMA_DATA.pick;
+    const closes = r.candles.map((c) => c.close);
+    const totalVol = r.candles.reduce((a, c) => a + c.volume, 0);
+    const totalAmt = r.candles.reduce((a, c) => a + c.volume * c.close, 0);
+    const score = window.COMMA_SCORE(r);
+
+    let change = prev.change, changeDown = false;
+    if (r.prevClose) {
+      const pct = ((r.current - r.prevClose) / r.prevClose) * 100;
+      changeDown = pct < 0;
+      change = (pct >= 0 ? "▲ " : "▼ ") + Math.abs(pct).toFixed(2) + "%";
+    }
+
+    const ok = r.result !== "진입 금지";
+    const unmet = [
+      r.clean ? null : "노이즈",
+      r.breakout ? null : "돌파",
+      Number(r.strength) >= 60 ? null : "체결강도",
+      r.flow === "매수 우위" ? null : "수급",
+    ].filter(Boolean).join(" · ");
+
+    return {
+      ...prev,
+      code: r.code,
+      name: r.name,
+      price: fmt.format(r.current) + "원",
+      change,
+      changeDown,
+      chips: [
+        { label: "거래대금", value: fmt.format(Math.round(totalAmt / 1e8)) + "억" },
+        { label: "거래량", value: fmt.format(Math.round(totalVol / 10000)) + "만주" },
+        prev.chips[2], // 시가총액: API 미제공 — PC GUI와 동일하게 기존 값 유지
+      ],
+      score: { ...prev.score, value: score + "점", percent: score },
+      signal: ok ? "지금 관심을 가져볼 자리" : "지금은 지켜볼 자리",
+      signalWarn: !ok,
+      description: ok
+        ? ["수급과 실적이 함께 좋아지는 구간", "상승 가능성이 높은 자리입니다."]
+        : ["진입 조건(" + unmet + ")이", "아직 충족되지 않았습니다."],
+      buyZone: { label: "매수구간", value: fmt.format(roundPrice(r.current * 0.975)) + " ~ " + fmt.format(roundPrice(r.current * 0.995)) + "원" },
+      targetZone: { label: "목표구간", value: fmt.format(roundPrice(r.current * 1.07)) + " ~ " + fmt.format(roundPrice(r.current * 1.12)) + "원" },
+      chart: normalize(closes),
+    };
+  };
+
+  // 추천 카드 데이터 — PC GUI의 loadReco와 동일한 매핑
+  window.COMMA_MAP_RECO = function (card, r) {
+    return {
+      ...card,
+      price: fmt.format(r.current) + "원",
+      score: "콤마 " + window.COMMA_SCORE(r) + "점",
+      chart: normalize(r.candles.map((c) => c.close)),
+    };
+  };
+})();
