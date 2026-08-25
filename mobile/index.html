@@ -72,7 +72,8 @@
 
   /* ---------- 1. 오늘의 시장 ---------- */
   .market-card { display: flex; gap: 10px; padding: 11px 12px; }
-  .market-left { flex: 1.3; min-width: 0; overflow: hidden; }
+  /* 기준 이미지 좌우 비율: 좌측(상태+지표) 약 63%, 우측(업종) 약 37% */
+  .market-left { flex: 1.7; min-width: 0; overflow: hidden; }
   .market-title-row { display: flex; align-items: center; gap: 6px; }
   .market-title { font-size: 14px; font-weight: 700; white-space: nowrap; }
   .live-pill {
@@ -164,8 +165,9 @@
   .zone-bar {
     display: flex; align-items: center; margin-top: 6px;
     background: #16283f; border-radius: 8px; padding: 4px 9px;
-    font-size: 9.5px; line-height: 1.25; white-space: nowrap;
+    font-size: 9.5px; line-height: 1.25;
   }
+  .zone-pair { display: inline-flex; align-items: baseline; white-space: nowrap; }
   .zone-label-buy { color: #ff6b6b; font-weight: 700; margin-right: 4px; }
   .zone-label-target { color: #60a5fa; font-weight: 700; margin-right: 4px; }
   .zone-value { color: #e6edf5; font-weight: 600; }
@@ -182,9 +184,15 @@
   .rec-row {
     display: flex; gap: 8px;
     padding: 0 var(--side-margin); margin-bottom: var(--card-gap);
+    /* 추천은 5개 유형(콤마형 포함) — 기준 이미지처럼 4개가 화면에 보이고
+       5번째 카드는 가로 스크롤로 이어진다. */
+    overflow-x: auto; scrollbar-width: none;
   }
+  .rec-row::-webkit-scrollbar { display: none; }
   .rec-card {
-    flex: 1; min-width: 0; background: #fff; border-radius: 11px;
+    /* 한 화면에 정확히 4개 (기준 이미지와 동일한 카드 폭 비율) */
+    flex: 0 0 calc((100% - 24px) / 4); min-width: 0;
+    background: #fff; border-radius: 11px;
     padding: 6px 7px 5px; box-shadow: 0 1px 3px rgba(15,23,42,0.04);
   }
   .rec-badge {
@@ -192,6 +200,7 @@
     font-size: 8.5px; font-weight: 700; border-radius: 999px; padding: 2.5px 6px;
     white-space: nowrap;
   }
+  .rec-badge.comma { background: #e8f0fe; color: #3182f6; }
   .rec-badge.safe { background: #dcfce7; color: #16a34a; }
   .rec-badge.aggressive { background: #ffedd5; color: #ea580c; }
   .rec-badge.inst { background: #ede9fe; color: #7c3aed; }
@@ -211,13 +220,13 @@
   }
   .search-input span { font-size: 10.5px; color: var(--text-light-gray); white-space: nowrap; }
   .search-chips {
-    display: flex; gap: 3px; margin-top: 5px; justify-content: space-between;
+    display: flex; gap: 2px; margin-top: 5px; justify-content: space-between;
     overflow-x: auto; scrollbar-width: none;
   }
   .search-chips::-webkit-scrollbar { display: none; }
   .s-chip {
-    flex: 0 0 auto; font-size: 7.5px; letter-spacing: -0.5px; color: #374151;
-    border: 1px solid var(--border); border-radius: 999px; padding: 3px 4px;
+    flex: 0 0 auto; font-size: 7.2px; letter-spacing: -0.55px; color: #374151;
+    border: 1px solid var(--border); border-radius: 999px; padding: 3px 3.5px;
     background: #fff; white-space: nowrap; line-height: 1.2;
   }
   .s-chip.ai {
@@ -245,7 +254,7 @@
   .step-label { font-size: 8px; line-height: 1.15; color: var(--text-gray); margin-top: 3px; white-space: nowrap; }
   .step-count { font-size: 9.5px; line-height: 1.15; font-weight: 800; margin-top: 1px; white-space: nowrap; }
   .step.final .step-count { color: var(--green); }
-  .step-arrow { color: #c4c9d1; font-size: 10px; padding-top: 8px; flex: none; }
+  .step-arrow { color: var(--green); font-size: 10px; padding-top: 8px; flex: none; }
 
   /* ---------- 6. 오늘의 시장 브리핑 ---------- */
   .briefing-card {
@@ -284,6 +293,18 @@
   .home-indicator {
     width: 120px; height: 4.5px; border-radius: 3px; background: #0f172a;
     margin: 6px auto 0;
+  }
+
+  /* ---------- 소형 기기 보호 (max-width 360px) ----------
+     글자를 삭제하지 않고 줄바꿈/스크롤로 대응한다. 기준 390px 화면에는 영향 없음.
+     주의: 기본 규칙을 덮어써야 하므로 반드시 스타일시트 마지막에 위치한다. */
+  @media (max-width: 360px) {
+    .market-status { white-space: normal; word-break: keep-all; }
+    .rec-card { flex-basis: calc((100% - 16px) / 3); }
+    .zone-bar { flex-wrap: wrap; row-gap: 2px; column-gap: 10px; }
+    .zone-sep { display: none; }
+    .briefing-msg { white-space: normal; overflow: visible; text-overflow: clip; }
+    .step-label { white-space: normal; word-break: keep-all; }
   }
 </style>
 </head>

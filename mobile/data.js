@@ -63,11 +63,15 @@ window.COMMA_DATA = {
     title: "오늘의 추천",
     subtitle: "(투자 목적별)",
     moreLabel: "전체보기",
+    // 오늘의 추천은 항상 5개 유형 전체를 유지한다 (콤마형 포함).
+    // 기준 이미지에는 4개가 보이므로 앞 4개가 기준 화면 그대로 노출되고
+    // 5번째(콤마형)는 가로 스크롤로 자연스럽게 이어진다.
     cards: [
       { type: "안전형", theme: "safe", icon: "shield", name: "SK하이닉스", price: "248,500원", score: "콤마 86점", chart: [20, 35, 28, 45, 38, 30, 42, 55, 48, 62, 58, 72] },
       { type: "공격형", theme: "aggressive", icon: "fire", name: "한미반도체", price: "135,800원", score: "콤마 91점", chart: [15, 28, 22, 40, 32, 50, 44, 38, 58, 52, 70, 80] },
       { type: "기관매집", theme: "inst", icon: "bank", name: "현대차", price: "203,000원", score: "콤마 84점", chart: [25, 20, 35, 30, 45, 38, 52, 46, 60, 55, 68, 75] },
       { type: "3일폭발", theme: "burst", icon: "bolt", name: "에코프로", price: "78,300원", score: "콤마 89점", chart: [18, 30, 25, 42, 36, 55, 48, 62, 56, 74, 68, 88] },
+      { type: "콤마형", theme: "comma", icon: "diamond", name: "삼성전자", price: "191,000원", score: "콤마 92점", chart: [14, 26, 22, 36, 30, 44, 40, 54, 50, 66, 62, 82] },
     ],
   },
 

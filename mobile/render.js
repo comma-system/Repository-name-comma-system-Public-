@@ -38,6 +38,7 @@
     bell: `<svg viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>`,
     gear: `<svg viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
     star: `<svg viewBox="0 0 24 24" width="13" height="13" fill="#facc15"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg>`,
+    diamond: `<svg viewBox="0 0 24 24" width="9" height="9" fill="#3182f6"><path d="M12 2l6 6-6 14L6 8z"/><path d="M2 8h20l-4-6H6z" opacity="0.55"/></svg>`,
     shield: `<svg viewBox="0 0 24 24" width="9" height="9" fill="#16a34a"><path d="M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5z"/></svg>`,
     fire: `<svg viewBox="0 0 24 24" width="9" height="9" fill="#ea580c"><path d="M12 2s1 3-1 6 -3 3-3 6a4 4 0 0 0 8 0c0-2-1-3-1-3s3 1 3 4a6 6 0 0 1-12 0c0-5 4-6 6-13z"/></svg>`,
     bank: `<svg viewBox="0 0 24 24" width="9" height="9" fill="#7c3aed"><path d="M12 2l10 6H2zM4 10h3v8H4zm6.5 0h3v8h-3zM17 10h3v8h-3zM2 20h20v2H2z"/></svg>`,
@@ -149,15 +150,15 @@
         </div>
       </div>
       <div class="zone-bar">
-        <span class="zone-label-buy">${P.buyZone.label}</span><span class="zone-value">${P.buyZone.value}</span>
+        <span class="zone-pair"><span class="zone-label-buy">${P.buyZone.label}</span><span class="zone-value">${P.buyZone.value}</span></span>
         <span class="zone-sep">|</span>
-        <span class="zone-label-target">${P.targetZone.label}</span><span class="zone-value">${P.targetZone.value}</span>
+        <span class="zone-pair"><span class="zone-label-target">${P.targetZone.label}</span><span class="zone-value">${P.targetZone.value}</span></span>
       </div>
     </div>`;
 
   // ---------- 3. 오늘의 추천 ----------
-  const REC_COLORS = { safe: "#22c55e", aggressive: "#f97316", inst: "#a78bfa", burst: "#ef4444" };
-  const REC_ICONS = { safe: ICONS.shield, aggressive: ICONS.fire, inst: ICONS.bank, burst: ICONS.bolt };
+  const REC_COLORS = { comma: "#3182f6", safe: "#22c55e", aggressive: "#f97316", inst: "#a78bfa", burst: "#ef4444" };
+  const REC_ICONS = { comma: ICONS.diamond, safe: ICONS.shield, aggressive: ICONS.fire, inst: ICONS.bank, burst: ICONS.bolt };
   const recSection = `
     <div class="section-head">
       <span class="section-title">${D.recommend.title}</span>
