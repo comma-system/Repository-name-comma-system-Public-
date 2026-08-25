@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>COMMA ONE</title>
+<style>
+  /* ==================================================================
+     COMMA ONE 모바일 메인 화면 — 기준 이미지 측정값 기반 (설계 폭 390px)
+     기준 이미지(855px 폭) 측정값 × 0.456 으로 환산한 고정 기준값.
+     기준 viewport(390×844)에서 전체 콘텐츠가 한 화면에 들어온다.
+     ================================================================== */
+  :root {
+    --page-bg: #f2f4f7;
+    --card-bg: #ffffff;
+    --dark-card-bg: #0c1a2c;
+    --text-strong: #111827;
+    --text-gray: #6b7280;
+    --text-light-gray: #9ca3af;
+    --green: #16a34a;
+    --red: #ef4444;
+    --blue: #2563eb;
+    --border: #e5e7eb;
+    --radius-card: 14px;
+    --side-margin: 16px;
+    --card-gap: 12px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: var(--page-bg); }
+  body {
+    line-height: 1.25; letter-spacing: -0.015em;
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    color: var(--text-strong);
+    -webkit-font-smoothing: antialiased;
+  }
+  #app {
+    max-width: 390px;
+    margin: 0 auto;
+    min-height: 100vh;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: 70px; /* 하단 네비게이션 높이만큼 확보 */
+  }
+
+  /* ---------- 상단 헤더 ---------- */
+  .header {
+    display: flex; align-items: center;
+    padding: 5px var(--side-margin) 6px;
+  }
+  .logo {
+    font-size: 18px; font-weight: 800; letter-spacing: 0.5px;
+    background: linear-gradient(90deg, #0a2540 55%, #2563eb 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .tagline { font-size: 11px; color: var(--text-gray); margin-left: 9px; flex: 1; }
+  .header-icons { display: flex; align-items: center; gap: 15px; }
+  .icon-btn { position: relative; width: 19px; height: 19px; }
+  .icon-btn svg { width: 19px; height: 19px; display: block; }
+  .badge {
+    position: absolute; top: -5px; right: -6px;
+    min-width: 13px; height: 13px; border-radius: 7px;
+    background: var(--red); color: #fff; font-size: 8px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; padding: 0 3px;
+  }
+
+  /* ---------- 공통 카드 ---------- */
+  .card {
+    background: var(--card-bg);
+    border-radius: var(--radius-card);
+    margin: 0 var(--side-margin) var(--card-gap);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  }
+
+  /* ---------- 1. 오늘의 시장 ---------- */
+  .market-card { display: flex; gap: 10px; padding: 11px 12px; }
+  .market-left { flex: 1.3; min-width: 0; overflow: hidden; }
+  .market-title-row { display: flex; align-items: center; gap: 6px; }
+  .market-title { font-size: 14px; font-weight: 700; white-space: nowrap; }
+  .live-pill {
+    display: inline-flex; align-items: center; gap: 3px;
+    background: #f3f4f6; border-radius: 999px;
+    font-size: 8.5px; color: var(--text-gray); padding: 3px 7px; white-space: nowrap;
+  }
+  .live-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--green); }
+  .market-status { display: flex; align-items: center; gap: 5px; margin-top: 9px; white-space: nowrap; }
+  .status-dot {
+    width: 14px; height: 14px; border-radius: 50%; flex: none;
+    background: radial-gradient(circle at 35% 30%, #4ade80, #16a34a);
+  }
+  .market-status b { font-size: 15px; font-weight: 800; }
+  /* 좁은 화면에서만 축소 — 기준 viewport(390px)에는 영향 없음 */
+  @media (max-width: 380px) {
+    .market-status b { font-size: 13px; }
+  }
+  .market-status .hl { color: var(--green); }
+  .market-stats { display: flex; gap: 5px; margin-top: 10px; }
+  .stat-box {
+    flex: 1; border: 1px solid var(--border); border-radius: 9px;
+    padding: 6px 2px 5px; text-align: center; background: #fff; min-width: 0; overflow: hidden;
+  }
+  .stat-label { font-size: 9px; color: var(--text-gray); white-space: nowrap; }
+  .stat-value { font-size: 15.5px; font-weight: 800; margin-top: 2px; white-space: nowrap; }
+  .stat-sub { font-size: 7.5px; color: var(--text-light-gray); margin-top: 1px; white-space: nowrap; }
+  .stat-dir { font-size: 9px; font-weight: 700; margin-top: 3px; color: var(--text-strong); white-space: nowrap; }
+  .stat-dir .tri { color: var(--green); font-size: 8px; }
+  .stat-amount { font-size: 11.5px; font-weight: 800; color: var(--red); margin-top: 2px; white-space: nowrap; }
+  .market-right { flex: 1; min-width: 0; padding-top: 1px; }
+  .sector-head { display: flex; align-items: center; justify-content: space-between; }
+  .sector-title { font-size: 10.5px; font-weight: 700; white-space: nowrap; }
+  .sector-chevron { color: #c4c9d1; font-size: 11px; }
+  .sector-list { margin-top: 2px; margin-bottom: 4px; }
+  .sector-row { display: flex; align-items: center; font-size: 10px; line-height: 1.15; padding: 1px 0; white-space: nowrap; }
+  .sector-rank { width: 12px; color: var(--text-light-gray); flex: none; }
+  .sector-name { flex: 1; color: #374151; overflow: hidden; text-overflow: ellipsis; }
+  .sector-change { font-weight: 700; }
+  .sector-change.up { color: var(--green); }
+  .sector-change.down { color: var(--blue); }
+
+  /* ---------- 2. 오늘의 포착 종목 ---------- */
+  .pick-card {
+    background: var(--dark-card-bg); color: #fff;
+    border-radius: 16px; padding: 10px 12px; position: relative; overflow: hidden;
+  }
+  .pick-head { display: flex; align-items: center; }
+  .pick-star {
+    width: 16px; height: 16px; border-radius: 50%; flex: none;
+    background: rgba(250, 204, 21, 0.15);
+    display: flex; align-items: center; justify-content: center; margin-right: 6px;
+  }
+  .pick-title { font-size: 13px; font-weight: 700; flex: 1; line-height: 1.2; }
+  .pick-more {
+    font-size: 9.5px; color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.35);
+    border-radius: 999px; padding: 2.5px 8px; white-space: nowrap; line-height: 1.2;
+  }
+  .pick-name-row { margin-top: 3px; display: flex; align-items: baseline; gap: 5px; }
+  .pick-name { font-size: 18px; font-weight: 800; line-height: 1.1; }
+  .pick-code { font-size: 12px; color: #8ea0b5; }
+  .pick-price-row { display: flex; align-items: baseline; gap: 7px; margin-top: 3px; }
+  .pick-price { font-size: 21px; font-weight: 800; line-height: 1.1; }
+  .pick-change { font-size: 13px; font-weight: 800; color: #ff5252; }
+  .pick-chart { position: absolute; right: 12px; top: 38px; width: 100px; height: 44px; }
+  .pick-chips { display: flex; gap: 5px; margin-top: 5px; }
+  .pick-chip {
+    background: #16283f; border-radius: 6px; padding: 3px 7px;
+    font-size: 8.5px; line-height: 1.2; color: #93a5bb; white-space: nowrap;
+  }
+  .pick-chip b { color: #e6edf5; font-weight: 700; margin-left: 3px; }
+  .pick-body { display: flex; align-items: center; gap: 11px; margin-top: 6px; }
+  .gauge { width: 58px; height: 58px; position: relative; flex-shrink: 0; }
+  .gauge svg { width: 58px; height: 58px; transform: rotate(-90deg); }
+  .gauge-center {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .gauge-label { font-size: 7.5px; color: #8ea0b5; }
+  .gauge-value { font-size: 15px; font-weight: 800; }
+  .gauge-max { font-size: 7.5px; color: #8ea0b5; }
+  .pick-right { flex: 1; min-width: 0; }
+  .signal-box {
+    display: inline-block; background: #0f3b2a; border: 1px solid rgba(34,197,94,0.35);
+    color: #4ade80; font-size: 11.5px; font-weight: 700; line-height: 1.2;
+    border-radius: 7px; padding: 4px 10px; white-space: nowrap;
+  }
+  .pick-desc { margin-top: 5px; font-size: 10px; line-height: 1.4; color: #b7c3d2; white-space: nowrap; }
+  .zone-bar {
+    display: flex; align-items: center; margin-top: 6px;
+    background: #16283f; border-radius: 8px; padding: 4px 9px;
+    font-size: 9.5px; line-height: 1.25; white-space: nowrap;
+  }
+  .zone-label-buy { color: #ff6b6b; font-weight: 700; margin-right: 4px; }
+  .zone-label-target { color: #60a5fa; font-weight: 700; margin-right: 4px; }
+  .zone-value { color: #e6edf5; font-weight: 600; }
+  .zone-sep { color: #35507a; margin: 0 7px; }
+
+  /* ---------- 3. 오늘의 추천 ---------- */
+  .section-head {
+    display: flex; align-items: baseline;
+    margin: 1px var(--side-margin) 7px;
+  }
+  .section-title { font-size: 14px; font-weight: 700; }
+  .section-sub { font-size: 10px; color: var(--text-gray); margin-left: 4px; flex: 1; }
+  .section-more { font-size: 10px; color: var(--text-gray); white-space: nowrap; }
+  .rec-row {
+    display: flex; gap: 8px;
+    padding: 0 var(--side-margin); margin-bottom: var(--card-gap);
+  }
+  .rec-card {
+    flex: 1; min-width: 0; background: #fff; border-radius: 11px;
+    padding: 6px 7px 5px; box-shadow: 0 1px 3px rgba(15,23,42,0.04);
+  }
+  .rec-badge {
+    display: inline-flex; align-items: center; gap: 2px;
+    font-size: 8.5px; font-weight: 700; border-radius: 999px; padding: 2.5px 6px;
+    white-space: nowrap;
+  }
+  .rec-badge.safe { background: #dcfce7; color: #16a34a; }
+  .rec-badge.aggressive { background: #ffedd5; color: #ea580c; }
+  .rec-badge.inst { background: #ede9fe; color: #7c3aed; }
+  .rec-badge.burst { background: #fee2e2; color: #dc2626; }
+  .rec-name { font-size: 11px; font-weight: 800; margin-top: 4px; white-space: nowrap; overflow: hidden; }
+  .rec-price { font-size: 9.5px; color: #374151; margin-top: 2px; white-space: nowrap; }
+  .rec-score { font-size: 9.5px; font-weight: 700; margin-top: 2px; white-space: nowrap; }
+  .rec-chart { width: 100%; height: 15px; margin-top: 3px; display: block; }
+
+  /* ---------- 4. 검색 ---------- */
+  .search-card { padding: 8px 12px 7px; }
+  .search-title { font-size: 13px; font-weight: 700; line-height: 1.2; }
+  .search-input {
+    display: flex; align-items: center; gap: 6px;
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 5px 10px; margin-top: 5px; background: #fff;
+  }
+  .search-input span { font-size: 10.5px; color: var(--text-light-gray); white-space: nowrap; }
+  .search-chips {
+    display: flex; gap: 3px; margin-top: 5px; justify-content: space-between;
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .search-chips::-webkit-scrollbar { display: none; }
+  .s-chip {
+    flex: 0 0 auto; font-size: 7.5px; letter-spacing: -0.5px; color: #374151;
+    border: 1px solid var(--border); border-radius: 999px; padding: 3px 4px;
+    background: #fff; white-space: nowrap; line-height: 1.2;
+  }
+  .s-chip.ai {
+    background: #dbeafe; border-color: #dbeafe; color: var(--blue); font-weight: 700;
+    display: inline-flex; align-items: center; gap: 2px;
+  }
+
+  /* ---------- 5. 오늘의 발굴 현황 ---------- */
+  .discovery-card { padding: 8px 8px 8px; }
+  .discovery-head { display: flex; align-items: center; padding: 0 2px; }
+  .discovery-title { font-size: 13px; font-weight: 700; line-height: 1.2; }
+  .info-icon {
+    width: 12px; height: 12px; border-radius: 50%; border: 1px solid #c4c9d1;
+    color: #c4c9d1; font-size: 8px; display: inline-flex; align-items: center;
+    justify-content: center; margin-left: 4px; flex: none;
+  }
+  .discovery-head .spacer { flex: 1; }
+  .discovery-steps { display: flex; align-items: flex-start; margin-top: 6px; }
+  .step { flex: 1; text-align: center; min-width: 0; }
+  .step-icon {
+    width: 26px; height: 26px; border-radius: 50%; background: #eff6ff;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto;
+  }
+  .step.final .step-icon { background: #fee2e2; }
+  .step-label { font-size: 8px; line-height: 1.15; color: var(--text-gray); margin-top: 3px; white-space: nowrap; }
+  .step-count { font-size: 9.5px; line-height: 1.15; font-weight: 800; margin-top: 1px; white-space: nowrap; }
+  .step.final .step-count { color: var(--green); }
+  .step-arrow { color: #c4c9d1; font-size: 10px; padding-top: 8px; flex: none; }
+
+  /* ---------- 6. 오늘의 시장 브리핑 ---------- */
+  .briefing-card {
+    background: #e4f5e9; border-radius: var(--radius-card);
+    margin: 0 var(--side-margin) var(--card-gap);
+    padding: 9px 10px; display: flex; align-items: center; gap: 7px;
+  }
+  .briefing-left { flex: 1; min-width: 0; }
+  .briefing-title { font-size: 11.5px; font-weight: 800; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+  .briefing-msg { font-size: 9px; color: #4b5563; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .briefing-illust { width: 38px; height: 32px; flex: none; }
+  .briefing-btn {
+    flex: none; background: var(--green); color: #fff; font-size: 10.5px; font-weight: 700;
+    border-radius: 999px; padding: 7px 12px; display: inline-flex; align-items: center; gap: 2px;
+    white-space: nowrap;
+  }
+
+  /* ---------- 하단 네비게이션 ---------- */
+  .bottom-nav {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    background: #fff; border-top: 1px solid #eceff3;
+    padding: 6px 0 calc(4px + env(safe-area-inset-bottom, 6px));
+    z-index: 10;
+  }
+  .bottom-nav-inner {
+    max-width: 390px; margin: 0 auto;
+    display: flex;
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+    color: #8a94a3;
+  }
+  .nav-item.active { color: var(--blue); }
+  .nav-item svg { width: 20px; height: 20px; }
+  .nav-label { font-size: 8.5px; }
+  .home-indicator {
+    width: 120px; height: 4.5px; border-radius: 3px; background: #0f172a;
+    margin: 6px auto 0;
+  }
+</style>
+</head>
+<body>
+  <div id="app"></div>
+  <script src="data.js"></script>
+  <script src="render.js"></script>
+</body>
+</html>
