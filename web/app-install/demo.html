@@ -1,0 +1,233 @@
+<title>COMMA 365 앱 설치 안내</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="app-install.css">
+<style>
+/* Layout: 실제 사이트 구조를 그대로 재현한 시연. 상단 고정 조작판 → ① 첫 화면 → ② 로그인 후 메인 → ③ 푸터 */
+:root{
+  --bg:#f5f7fa; --fg:#17202e; --muted:#5b6678; --line:#dde3ec; --surface:#fff;
+  --navy:#0f2a4a; --gold:#a97b2a; --gold-soft:#fbf3e4; --panel:#0f2a4a; --panel-fg:#fff;
+  --font:"Noto Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e131b;--fg:#e8edf5;--muted:#9fb0c6;--line:#2a3646;--surface:#141b26;--navy:#dbe6f5;--gold:#d9b25f;--gold-soft:#2a2412;--panel:#1b2433;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e131b;--fg:#e8edf5;--muted:#9fb0c6;--line:#2a3646;--surface:#141b26;--navy:#dbe6f5;--gold:#d9b25f;--gold-soft:#2a2412;--panel:#1b2433;color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:16px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+h1,h2,h3,p{margin:0}
+.gutter{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1120px;margin:0 auto}
+
+/* 조작판 */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:100;background:var(--panel)}
+.panel{position:sticky;top:env(safe-area-inset-top,0px);z-index:90;background:var(--panel);color:var(--panel-fg);padding-block:10px;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.panel .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
+.panel .lbl{font-size:.8rem;opacity:.75;letter-spacing:.06em}
+.seg{display:inline-flex;border:1px solid rgba(255,255,255,.3);border-radius:10px;overflow:hidden}
+.seg button{font:inherit;font-size:.88rem;padding:7px 12px;border:0;background:transparent;color:inherit;cursor:pointer;min-height:40px}
+.seg button+button{border-left:1px solid rgba(255,255,255,.3)}
+.seg button[aria-pressed="true"]{background:#fff;color:#0f2a4a;font-weight:700}
+.seg button:focus-visible{outline:2px solid #fff;outline-offset:-3px}
+.panel .hint{font-size:.8rem;opacity:.8;flex:1 1 220px}
+.tag{display:inline-block;font-size:.72rem;letter-spacing:.08em;color:var(--gold);font-weight:700;border:1px solid var(--gold);border-radius:99px;padding:2px 10px;margin-bottom:12px}
+
+/* ① 첫 화면 재현 */
+.site-head{display:flex;align-items:center;gap:12px;padding-block:14px;border-bottom:1px solid var(--line);background:var(--surface)}
+.logo{width:44px;height:44px;border-radius:10px;background:#0b0f17;display:grid;place-items:center;color:#d9b25f;font-weight:900;font-size:1.3rem;flex:none}
+.brand{font-weight:900;font-size:1.25rem;letter-spacing:.02em;color:var(--navy)}
+.site-head .sp{flex:1}
+.btn-o{border:1.5px solid var(--navy);color:var(--navy);background:transparent;border-radius:10px;padding:9px 14px;font:inherit;font-weight:700;font-size:.9rem;min-height:44px;cursor:pointer}
+.hero{display:grid;grid-template-columns:1fr;gap:28px;padding-block:clamp(28px,5vw,64px)}
+@media(min-width:900px){.hero{grid-template-columns:1.1fr 1fr;align-items:center;gap:48px}}
+.eyebrow{border-left:3px solid var(--gold);padding-left:10px;color:var(--gold);font-weight:700;font-size:.95rem}
+.h1{font-size:clamp(1.9rem,1.3rem+2.6vw,3.2rem);font-weight:900;line-height:1.2;color:var(--navy);margin-top:12px;text-wrap:balance}
+.h1 em{font-style:normal;color:var(--gold)}
+.lead{color:var(--muted);margin-top:14px;max-width:34em}
+.cta{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;max-width:300px;margin-top:22px;min-height:56px;padding:0 18px;border-radius:12px;border:1.5px solid var(--navy);background:var(--surface);color:var(--navy);font:inherit;font-weight:700;font-size:1.05rem;cursor:pointer;text-decoration:none}
+.login-row{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:12px 16px;background:var(--surface);display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:.95rem}
+.login-row a{color:var(--navy);font-weight:700}
+.steps{margin-top:14px;color:var(--muted);font-size:.85rem;display:flex;flex-wrap:wrap;gap:6px 10px}
+.steps b{font-weight:500}
+.preview{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:clamp(16px,2.5vw,24px);box-shadow:0 10px 30px rgba(15,42,74,.06)}
+.preview h3{font-size:1.05rem;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.preview h3 small{font-weight:400;color:var(--muted);font-size:.78rem}
+.grade{display:flex;gap:16px;align-items:center;margin-top:16px;padding-block:16px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.grade .b{width:72px;height:72px;border-radius:14px;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:2.4rem;font-weight:900;flex:none}
+.grade b{font-size:1.2rem}
+.grade span{display:block;color:var(--muted);font-size:.85rem}
+.row{display:flex;justify-content:space-between;gap:12px;padding-block:12px;border-bottom:1px solid var(--line);font-size:.95rem}
+.row b{font-variant-numeric:tabular-nums}
+.disclaimer{font-size:.78rem;color:var(--muted);margin-top:10px}
+
+/* ② 로그인 후 메인 재현 */
+.main-frame{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:24px}
+.main-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.main-head .live{font-size:.72rem;color:#c62828;font-weight:700}
+.main-head .sp{flex:1}
+.pill{border:1px solid var(--line);border-radius:99px;padding:3px 10px;font-size:.78rem;color:var(--muted)}
+.idx{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;padding:14px 16px}
+.idx div{background:var(--bg);border-radius:12px;padding:10px 12px}
+.idx small{color:var(--muted);font-size:.78rem}
+.idx b{display:block;font-size:1.2rem;font-variant-numeric:tabular-nums}
+.idx i{font-style:normal;color:#1d4ed8;font-size:.85rem}
+.section-h{padding:4px 16px 10px;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;padding:0 16px 16px}
+.cards div{border:1px solid var(--line);border-radius:12px;padding:12px}
+.cards small{color:var(--muted);font-size:.78rem}
+.tabbar{display:flex;border-top:1px solid var(--line);background:var(--surface)}
+.tabbar span{flex:1;text-align:center;padding:10px 4px;font-size:.78rem;color:var(--muted)}
+.tabbar span:first-child{color:var(--navy);font-weight:700}
+
+/* ③ 푸터 재현 */
+.biz{padding-block:20px 40px;color:var(--muted);font-size:.8rem;display:flex;flex-direction:column;gap:6px}
+.biz .links{display:flex;flex-wrap:wrap;gap:6px 16px}
+.biz a{color:var(--fg)}
+.sec{padding-block:clamp(24px,4vw,48px)}
+.sec+.sec{border-top:1px solid var(--line)}
+.note{margin-top:18px;font-size:.88rem;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:12px 14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<!-- 조작판 -->
+<div class="panel gutter">
+  <div class="wrap">
+    <span class="lbl">보기</span>
+    <div class="seg" role="group" aria-label="기기 선택">
+      <button type="button" data-dev="pc" aria-pressed="true">PC</button>
+      <button type="button" data-dev="ios" aria-pressed="false">iPhone</button>
+      <button type="button" data-dev="android" aria-pressed="false">안드로이드</button>
+    </div>
+    <div class="seg" role="group" aria-label="iPhone 앱 상태">
+      <button type="button" data-ios="ready" aria-pressed="true">iPhone 앱 있음</button>
+      <button type="button" data-ios="soon" aria-pressed="false">준비 중</button>
+    </div>
+    <span class="hint">휴대폰 화면은 실제 폰으로 열거나 브라우저 폭을 줄여 확인하세요. 띠는 휴대폰에서만 보입니다.</span>
+  </div>
+</div>
+
+<!-- 공통 아이콘 -->
+<svg hidden xmlns="http://www.w3.org/2000/svg">
+  <symbol id="ai-ic-apple" viewBox="0 0 24 24"><path fill="currentColor" d="M16.37 12.73c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.09-2.01-3.76-2.04-1.6-.16-3.12.94-3.93.94-.81 0-2.06-.92-3.39-.89-1.74.03-3.35 1.01-4.25 2.57-1.81 3.14-.46 7.79 1.3 10.34.86 1.25 1.89 2.65 3.24 2.6 1.3-.05 1.79-.84 3.36-.84 1.57 0 2.01.84 3.39.81 1.4-.03 2.29-1.27 3.14-2.52.99-1.45 1.4-2.85 1.42-2.92-.03-.01-2.72-1.04-2.74-4.14zM13.79 5.1c.72-.87 1.2-2.08 1.07-3.29-1.03.04-2.29.69-3.03 1.56-.66.77-1.25 2-1.09 3.18 1.15.09 2.33-.58 3.05-1.45z"/></symbol>
+  <symbol id="ai-ic-play" viewBox="0 0 24 24"><path fill="#00C853" d="M3.6 2.4 13.3 12 3.6 21.6c-.4-.2-.6-.6-.6-1.1V3.5c0-.5.2-.9.6-1.1z"/><path fill="#2196F3" d="M16.6 8.7 13.3 12l3.3 3.3 3.9-2.2c1.1-.6 1.1-1.6 0-2.2l-3.9-2.2z"/><path fill="#FFC107" d="M3.6 2.4c.3-.2.7-.2 1.1 0l11.9 6.3L13.3 12 3.6 2.4z"/><path fill="#F44336" d="M3.6 21.6c.3.2.7.2 1.1 0l11.9-6.3L13.3 12l-9.7 9.6z"/></symbol>
+</svg>
+
+<!-- ============ ① 첫 화면 ============ -->
+<section class="sec gutter" id="s1">
+<div class="wrap">
+  <span class="tag">① 첫 화면 · 무료 체험 아래</span>
+  <div class="site-head">
+    <div class="logo">,</div><span class="brand">COMMA 365</span><span class="sp"></span>
+    <button class="btn-o" type="button">로그인하고 메인으로</button>
+  </div>
+  <div class="hero">
+    <div>
+      <div class="eyebrow">매수 전, 나만의 기준을 세우세요</div>
+      <h1 class="h1">추천 이후의 결과까지<br><em>직접 확인하세요.</em></h1>
+      <p class="lead">매수구간·목표·손절 기준과 날짜별 추천 성과를 함께 보여드립니다.</p>
+      <a class="cta" href="#"><span>무료 체험 시작</span><span aria-hidden="true">→</span></a>
+      <div class="login-row"><span>이미 가입하셨나요?</span><a href="#">로그인하고 메인으로 →</a></div>
+      <div class="steps"><b>가입·인증</b><span>→</span><b>무료 체험</b><span>→</span><b>메인 화면</b></div>
+
+      <!-- ▼ 여기부터 앱 설치 안내 ① -->
+      <section class="ai ai-hero" aria-label="앱 설치 안내">
+        <div class="ai-hero-copy">
+          <span class="ai-eyebrow">APP</span>
+          <span class="ai-title">앱으로도 이용할 수 있어요</span>
+          <span class="ai-sub">추천 알림을 바로 받고, 로그인 없이 바로 열립니다.</span>
+        </div>
+        <div class="ai-badges" data-show="auto">
+          <a class="ai-badge" data-store="ios" href="#" rel="noopener"><svg aria-hidden="true"><use href="#ai-ic-apple"/></svg><span class="ai-badge-txt"><small>Download on the</small><b>App Store</b></span></a>
+          <a class="ai-badge" data-store="android" href="#" rel="noopener"><svg aria-hidden="true"><use href="#ai-ic-play"/></svg><span class="ai-badge-txt"><small>GET IT ON</small><b>Google Play</b></span></a>
+        </div>
+        <div class="ai-qr" aria-label="휴대폰으로 QR을 찍으면 앱 설치 페이지로 이동"><div class="ai-qr-code"></div><span>휴대폰 카메라로 찍으면 바로 설치</span></div>
+      </section>
+      <!-- ▲ 앱 설치 안내 ① 끝 -->
+    </div>
+    <div class="preview">
+      <h3>분석 화면 미리보기 <small>저장된 분석 예시 · 실시간 추천 아님</small></h3>
+      <div class="grade"><div class="b">B</div><div><b>관망 · 구간 대기</b><span>현재가가 매수구간 안입니다 · 등급이 A로 오르면 매수를 검토합니다</span></div></div>
+      <div class="row"><span>현재가</span><b>64,900원</b></div>
+      <div class="row"><span>매수 구간</span><b>63,078 ~ 66,322원</b></div>
+      <div class="row"><span>목표 구간</span><b>71,000 ~ 72,622원</b></div>
+      <div class="row"><span>손절 기준</span><b>60,378원</b></div>
+      <p class="disclaimer">저장된 분석 예시이며 매수 추천이 아닙니다.</p>
+    </div>
+  </div>
+  <p class="note">무료 체험 버튼이 주인공이고, 앱 안내는 그 아래에 작게 들어갑니다. 휴대폰에서는 기기에 맞는 배지 하나만, PC에서는 두 배지와 QR이 보입니다.</p>
+</div>
+</section>
+
+<!-- ============ ② 로그인 후 메인 ============ -->
+<section class="sec gutter" id="s2">
+<div class="wrap">
+  <span class="tag">② 로그인 후 메인 · 상단 띠 (기존 "홈 화면에 추가" 띠 교체)</span>
+  <div class="main-frame">
+    <!-- ▼ 앱 설치 안내 ② -->
+    <div class="ai ai-banner" role="region" aria-label="앱 설치 안내" hidden style="position:static">
+      <div class="ai-banner-icon"><span style="font-weight:900;color:#0b0f17;font-size:1.3rem">,</span></div>
+      <div class="ai-banner-txt"><b>앱으로 더 편하게</b><span>추천·매도 신호 알림을 놓치지 않아요</span></div>
+      <a class="ai-banner-cta" href="#" rel="noopener">앱 설치</a>
+      <button class="ai-banner-close" type="button" aria-label="닫기">×</button>
+    </div>
+    <!-- ▲ 앱 설치 안내 ② 끝 -->
+    <div class="main-head"><div class="logo" style="width:36px;height:36px;font-size:1rem">,</div><span class="brand" style="font-size:1.05rem">COMMA 365</span><span class="live">● LIVE</span><span class="sp"></span><span class="pill">정회원</span><span class="pill">도움말 ON</span></div>
+    <div class="idx"><div><small>KOSPI</small><b>5,552.74</b><i>▼ 3.73%</i></div><div><small>KOSDAQ</small><b>781.97</b><i>▼ 3.33%</i></div><div><small>강한 업종</small><b style="font-size:1rem">음식료·담배</b><i>▼ 0.42%</i></div></div>
+    <div class="section-h">오늘의 추천</div>
+    <div class="cards"><div>서울보증보험<br><small>다중포착</small></div><div>슈프리마<br><small>다중포착 · 콤마형</small></div><div>빙그레<br><small>다중포착</small></div></div>
+    <div class="tabbar"><span>홈</span><span>검색</span><span>보유</span><span>관심</span></div>
+  </div>
+  <p class="note" id="bannerNote">띠는 휴대폰에서, 2번째 방문부터 보이며 닫으면 30일 동안 다시 뜨지 않습니다. 홈 화면 앱이나 설치된 앱으로 열면 아예 나오지 않습니다. 이 시연에서는 iPhone·안드로이드를 고르면 바로 보입니다.</p>
+</div>
+</section>
+
+<!-- ============ ③ 푸터 ============ -->
+<section class="sec gutter" id="s3">
+<div class="wrap">
+  <span class="tag">③ 푸터 · 사업자 정보 위</span>
+  <!-- ▼ 앱 설치 안내 ③ -->
+  <section class="ai ai-footer" aria-label="앱 다운로드">
+    <div class="ai-footer-copy">
+      <div class="logo" style="width:44px;height:44px">,</div>
+      <div><b>COMMA 365 앱</b><span>iPhone · 안드로이드에서 설치할 수 있습니다</span></div>
+    </div>
+    <div class="ai-badges" data-show="both">
+      <a class="ai-badge" data-store="ios" href="#" rel="noopener"><svg aria-hidden="true"><use href="#ai-ic-apple"/></svg><span class="ai-badge-txt"><small>Download on the</small><b>App Store</b></span></a>
+      <a class="ai-badge" data-store="android" href="#" rel="noopener"><svg aria-hidden="true"><use href="#ai-ic-play"/></svg><span class="ai-badge-txt"><small>GET IT ON</small><b>Google Play</b></span></a>
+    </div>
+  </section>
+  <!-- ▲ 앱 설치 안내 ③ 끝 -->
+  <div class="biz">
+    <div class="links"><a href="#">이용약관</a><a href="#"><b>개인정보처리방침</b></a><a href="#">환불 규정</a><a href="#">계정 삭제 안내</a></div>
+    <div>콤마365 · 대표 ○○○ · 사업자등록번호 000-00-00000 · 통신판매업 신고 제0000-서울-0000호</div>
+    <div>주소 · 문의 help@comma365.co.kr</div>
+    <div>투자 결정과 책임은 본인에게 있습니다. 과거 결과는 미래 수익을 보장하지 않습니다.</div>
+  </div>
+</div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+  // 시연용 설정: 실제 적용 시 스토어 주소를 넣고 forceDevice·bannerMinVisit 줄은 지웁니다.
+  var DEMO = { ios: 'https://apps.apple.com/kr/app/id0000000000', android: 'https://play.google.com/store/apps/details?id=kr.co.comma365' };
+  window.COMMA_APP_INSTALL = {
+    ios: DEMO.ios, android: DEMO.android, smart: 'https://comma365.co.kr/app',
+    forceDevice: 'pc', bannerMinVisit: 1, storageKey: 'comma365.appInstall.demo'
+  };
+</script>
+<script src="app-install.js"></script>
+<script>
+  (function(){
+    var dev='pc', iosReady=true;
+    function apply(){
+      try{ localStorage.removeItem('comma365.appInstall.demo'); }catch(e){}
+      window.CommaAppInstall.init(document,{ forceDevice:dev, ios: iosReady?DEMO.ios:'' });
+    }
+    document.querySelectorAll('[data-dev]').forEach(function(b){ b.addEventListener('click',function(){
+      dev=b.dataset.dev; document.querySelectorAll('[data-dev]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b));}); apply(); });});
+    document.querySelectorAll('[data-ios]').forEach(function(b){ b.addEventListener('click',function(){
+      iosReady=b.dataset.ios==='ready'; document.querySelectorAll('[data-ios]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b));}); apply(); });});
+    // 실제 기기면 그 기기로 시작
+    var ua=navigator.userAgent; dev=/iPhone|iPad|iPod/.test(ua)?'ios':/Android/.test(ua)?'android':'pc';
+    document.querySelectorAll('[data-dev]').forEach(function(x){x.setAttribute('aria-pressed',String(x.dataset.dev===dev));});
+    apply();
+  })();
+</script>

@@ -1,0 +1,78 @@
+<!-- ============================================================
+     COMMA 365 · 앱 설치 안내 HTML 조각 3개
+     각 조각을 해당 위치에 붙여 넣고, 페이지 끝에 app-install.css / app-install.js 포함
+     아이콘은 공식 배지 이미지로 교체 가능 (README 참고)
+     ============================================================ -->
+
+<!-- 공통: 스토어 배지 아이콘 (한 번만 넣으면 됨) -->
+<svg hidden xmlns="http://www.w3.org/2000/svg">
+  <symbol id="ai-ic-apple" viewBox="0 0 24 24"><path fill="currentColor" d="M16.37 12.73c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.09-2.01-3.76-2.04-1.6-.16-3.12.94-3.93.94-.81 0-2.06-.92-3.39-.89-1.74.03-3.35 1.01-4.25 2.57-1.81 3.14-.46 7.79 1.3 10.34.86 1.25 1.89 2.65 3.24 2.6 1.3-.05 1.79-.84 3.36-.84 1.57 0 2.01.84 3.39.81 1.4-.03 2.29-1.27 3.14-2.52.99-1.45 1.4-2.85 1.42-2.92-.03-.01-2.72-1.04-2.74-4.14zM13.79 5.1c.72-.87 1.2-2.08 1.07-3.29-1.03.04-2.29.69-3.03 1.56-.66.77-1.25 2-1.09 3.18 1.15.09 2.33-.58 3.05-1.45z"/></symbol>
+  <symbol id="ai-ic-play" viewBox="0 0 24 24"><path fill="#00C853" d="M3.6 2.4 13.3 12 3.6 21.6c-.4-.2-.6-.6-.6-1.1V3.5c0-.5.2-.9.6-1.1z"/><path fill="#2196F3" d="M16.6 8.7 13.3 12l3.3 3.3 3.9-2.2c1.1-.6 1.1-1.6 0-2.2l-3.9-2.2z"/><path fill="#FFC107" d="M3.6 2.4c.3-.2.7-.2 1.1 0l11.9 6.3L13.3 12 3.6 2.4z"/><path fill="#F44336" d="M3.6 21.6c.3.2.7.2 1.1 0l11.9-6.3L13.3 12l-9.7 9.6z"/></symbol>
+</svg>
+
+<!-- ============ 1. 첫 화면: "가입·인증 → 무료 체험 → 메인 화면" 줄 바로 아래 ============ -->
+<section class="ai ai-hero" aria-label="앱 설치 안내">
+  <div class="ai-hero-copy">
+    <span class="ai-eyebrow">APP</span>
+    <span class="ai-title">앱으로도 이용할 수 있어요</span>
+    <span class="ai-sub">추천 알림을 바로 받고, 로그인 없이 바로 열립니다.</span>
+  </div>
+  <div class="ai-badges" data-show="auto">
+    <a class="ai-badge" data-store="ios" href="#" rel="noopener">
+      <svg aria-hidden="true"><use href="#ai-ic-apple"/></svg>
+      <span class="ai-badge-txt"><small>Download on the</small><b>App Store</b></span>
+    </a>
+    <a class="ai-badge" data-store="android" href="#" rel="noopener">
+      <svg aria-hidden="true"><use href="#ai-ic-play"/></svg>
+      <span class="ai-badge-txt"><small>GET IT ON</small><b>Google Play</b></span>
+    </a>
+  </div>
+  <div class="ai-qr" aria-label="휴대폰으로 QR을 찍으면 앱 설치 페이지로 이동">
+    <div class="ai-qr-code"></div>
+    <span>휴대폰 카메라로 찍으면 바로 설치</span>
+  </div>
+</section>
+
+<!-- ============ 2. 로그인 후 메인 상단 띠 (기존 "홈 화면에 추가" 띠를 이것으로 교체) ============ -->
+<div class="ai ai-banner" role="region" aria-label="앱 설치 안내" hidden>
+  <div class="ai-banner-icon"><img src="/logo-192.png" alt="" width="40" height="40"></div>
+  <div class="ai-banner-txt">
+    <b>앱으로 더 편하게</b>
+    <span>추천·매도 신호 알림을 놓치지 않아요</span>
+  </div>
+  <a class="ai-banner-cta" href="#" rel="noopener">앱 설치</a>
+  <button class="ai-banner-close" type="button" aria-label="닫기">×</button>
+</div>
+
+<!-- ============ 3. 푸터: 사업자 정보 위 ============ -->
+<section class="ai ai-footer" aria-label="앱 다운로드">
+  <div class="ai-footer-copy">
+    <img class="ai-footer-logo" src="/logo-192.png" alt="" width="44" height="44">
+    <div><b>COMMA 365 앱</b><span>iPhone · 안드로이드에서 설치할 수 있습니다</span></div>
+  </div>
+  <div class="ai-badges" data-show="both">
+    <a class="ai-badge" data-store="ios" href="#" rel="noopener">
+      <svg aria-hidden="true"><use href="#ai-ic-apple"/></svg>
+      <span class="ai-badge-txt"><small>Download on the</small><b>App Store</b></span>
+    </a>
+    <a class="ai-badge" data-store="android" href="#" rel="noopener">
+      <svg aria-hidden="true"><use href="#ai-ic-play"/></svg>
+      <span class="ai-badge-txt"><small>GET IT ON</small><b>Google Play</b></span>
+    </a>
+  </div>
+</section>
+
+<!-- ============ 설정 + 스크립트 (페이지 끝) ============ -->
+<script>
+  window.COMMA_APP_INSTALL = {
+    ios: '',       // 예: 'https://apps.apple.com/kr/app/id1234567890'  (비우면 "iPhone 앱 준비 중")
+    android: '',   // 예: 'https://play.google.com/store/apps/details?id=kr.co.comma365'
+    smart: 'https://comma365.co.kr/app',
+    appUA: 'Comma365App',
+    bannerSnoozeDays: 30,
+    bannerMinVisit: 2
+  };
+</script>
+<!-- QR은 PC 첫 화면에만 필요. 없어도 나머지는 동작 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+<script src="/app-install.js" defer></script>
